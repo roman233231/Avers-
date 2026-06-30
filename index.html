@@ -1,0 +1,2740 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0, viewport-fit=cover">
+    <title>Сервіс Аверс — CRM автосервісу</title>
+    <style>
+        :root {
+            --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 22px;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.10);
+            --glass-bg-hover: rgba(255, 255, 255, 0.09);
+            --text-primary: #e8e8f0;
+            --text-secondary: #a8a8c0;
+            --text-muted: #6e6e88;
+            --bg-primary: #080812;
+            --bg-secondary: #0f0f1e;
+            --bg-elevated: #181830;
+            --accent: #4f8fff;
+            --accent-hover: #6ba8ff;
+            --accent-subtle: rgba(79, 143, 255, 0.13);
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f0a020;
+            --input-bg: rgba(255, 255, 255, 0.03);
+            --input-border: rgba(255, 255, 255, 0.12);
+            --input-focus: rgba(79, 143, 255, 0.5);
+            --autocomplete-bg: #1a1a32;
+            --autocomplete-hover: rgba(79, 143, 255, 0.14);
+            --tag-bg: rgba(79, 143, 255, 0.15);
+            --tag-text: #8ab8ff;
+            --badge-progress-bg: rgba(240, 160, 32, 0.18);
+            --badge-progress-text: #f5c060;
+            --badge-done-bg: rgba(46, 204, 113, 0.18);
+            --badge-done-text: #5fe39e;
+            --paid-bg: rgba(46, 204, 113, 0.15);
+            --paid-text: #5fe39e;
+            --debt-bg: rgba(231, 76, 60, 0.18);
+            --debt-text: #ff7b6e;
+            --partial-bg: rgba(240, 160, 32, 0.18);
+            --partial-text: #f5c060;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            --row-hover: rgba(255, 255, 255, 0.03);
+        }
+        [data-theme="light"] {
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glass-bg-hover: rgba(255, 255, 255, 0.9);
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a60;
+            --text-muted: #8888a0;
+            --bg-primary: #eef0f5;
+            --bg-secondary: #e2e4ec;
+            --bg-elevated: #ffffff;
+            --input-bg: rgba(0, 0, 0, 0.02);
+            --input-border: rgba(0, 0, 0, 0.1);
+            --input-focus: rgba(79, 143, 255, 0.45);
+            --autocomplete-bg: #ffffff;
+            --autocomplete-hover: rgba(79, 143, 255, 0.08);
+            --tag-bg: rgba(79, 143, 255, 0.1);
+            --tag-text: #2d5fcc;
+            --badge-progress-bg: rgba(240, 160, 32, 0.14);
+            --badge-progress-text: #8a5c10;
+            --badge-done-bg: rgba(46, 204, 113, 0.12);
+            --badge-done-text: #1d8c4a;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --row-hover: rgba(0, 0, 0, 0.02);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        body {
+            font-family: var(--font);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            line-height: 1.5;
+            transition: background .25s, color .25s;
+            overflow-x: hidden;
+            letter-spacing: -0.1px;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(128, 128, 160, 0.3);
+            border-radius: 3px;
+        }
+        [data-theme="light"] ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .app-container {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 10px 14px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 10px 16px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            flex-shrink: 0;
+        }
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, #4f8fff, #6c5ce7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(79, 143, 255, 0.4);
+            flex-shrink: 0;
+        }
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+        .logo-sub {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            white-space: nowrap;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 15px;
+            border-radius: 50px;
+            border: 1px solid transparent;
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            font-family: var(--font);
+            transition: all var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            min-height: 38px;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 4px 14px rgba(79, 143, 255, 0.35);
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 6px 20px rgba(79, 143, 255, 0.45);
+            transform: translateY(-1px);
+        }
+        .btn-glass {
+            background: var(--glass-bg);
+            border-color: var(--glass-border);
+            color: var(--text-primary);
+        }
+        .btn-glass:hover {
+            background: var(--glass-bg-hover);
+        }
+        .btn-sm {
+            padding: 5px 11px;
+            font-size: 0.73rem;
+            min-height: 30px;
+        }
+        .btn-icon {
+            width: 34px;
+            height: 34px;
+            min-height: 34px;
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+        .btn-icon:hover {
+            background: var(--glass-bg-hover);
+        }
+        .btn-danger {
+            color: var(--danger);
+            border-color: var(--danger);
+            background: rgba(231, 76, 60, 0.08);
+        }
+        .btn-danger:hover {
+            background: rgba(231, 76, 60, 0.18);
+        }
+        .theme-toggle {
+            width: 36px;
+            height: 36px;
+            min-height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 3px;
+            background: var(--glass-bg);
+            border-radius: 50px;
+            padding: 3px;
+            border: 1px solid var(--glass-border);
+            flex-shrink: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            max-width: 100%;
+        }
+        .tab-nav::-webkit-scrollbar {
+            display: none;
+        }
+        .tab-btn {
+            padding: 7px 15px;
+            border-radius: 50px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            font-family: var(--font);
+            transition: all var(--transition);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tab-btn.active {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(79, 143, 255, 0.35);
+        }
+        .tab-btn:hover:not(.active) {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .tab-content {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            gap: 14px;
+            flex: 1;
+            min-height: 550px;
+        }
+        .calendar-panel {
+            flex: 1;
+            min-width: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--glass-border);
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .calendar-title {
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 5px 12px;
+            border-radius: 50px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .calendar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 3px;
+        }
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            min-height: 480px;
+        }
+        .month-day-header {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 7px 3px;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            z-index: 5;
+            border-radius: 4px;
+        }
+        .month-cell {
+            min-height: 68px;
+            border-radius: var(--radius-sm);
+            padding: 3px 4px;
+            cursor: pointer;
+            transition: all .15s;
+            border: 2px solid transparent;
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            position: relative;
+        }
+        .month-cell:hover {
+            background: var(--glass-bg-hover);
+            border-color: var(--glass-border);
+        }
+        .month-cell.today {
+            background: rgba(79, 143, 255, 0.12);
+            border-color: var(--accent);
+        }
+        .month-cell.selected {
+            background: rgba(79, 143, 255, 0.2);
+            border-color: var(--accent);
+            box-shadow: inset 0 0 0 2px rgba(79, 143, 255, 0.3);
+        }
+        .month-cell.other-month {
+            opacity: 0.25;
+            pointer-events: none;
+        }
+        .month-cell .day-num {
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-align: right;
+            padding: 1px 4px;
+            line-height: 1;
+        }
+        .month-cell.today .day-num {
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+        }
+        .cell-appt {
+            font-size: 0.6rem;
+            padding: 1px 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 600;
+            border-left: 3px solid transparent;
+            max-width: 100%;
+            line-height: 1.4;
+        }
+        .cell-appt.in-progress {
+            background: var(--badge-progress-bg);
+            border-left-color: var(--warning);
+            color: var(--badge-progress-text);
+        }
+        .cell-appt.completed {
+            background: var(--badge-done-bg);
+            border-left-color: var(--success);
+            color: var(--badge-done-text);
+        }
+
+        /* Side Panel */
+        .side-panel {
+            width: 440px;
+            flex-shrink: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
+            max-height: calc(100dvh - 120px);
+            position: sticky;
+            top: 95px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            position: relative;
+        }
+        .form-group label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 8px 11px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 0.83rem;
+            font-family: var(--font);
+            resize: vertical;
+            width: 100%;
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 3px rgba(79, 143, 255, 0.08);
+        }
+        .form-group input[readonly] {
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-secondary);
+            cursor: default;
+        }
+        .form-row {
+            display: flex;
+            gap: 6px;
+        }
+        .form-row .form-group {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Autocomplete */
+        .autocomplete-wrapper {
+            position: relative;
+        }
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--autocomplete-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 60;
+            display: none;
+            box-shadow: var(--shadow);
+            margin-top: 2px;
+        }
+        .autocomplete-dropdown.show {
+            display: block;
+        }
+        .autocomplete-item {
+            padding: 7px 11px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            border-bottom: 1px solid rgba(128, 128, 160, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-primary);
+            transition: background var(--transition);
+        }
+        .autocomplete-item:hover,
+        .autocomplete-item.active {
+            background: var(--autocomplete-hover);
+        }
+        .autocomplete-item.add-new {
+            color: var(--accent);
+            font-style: italic;
+            font-weight: 600;
+        }
+
+        /* Tags */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            min-height: 28px;
+            padding: 4px;
+            border-radius: var(--radius-sm);
+            border: 1px dashed var(--glass-border);
+            align-items: center;
+        }
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            animation: fadeIn 0.2s;
+        }
+        .tag .remove-tag {
+            cursor: pointer;
+            font-weight: 700;
+            opacity: 0.6;
+            margin-left: 1px;
+            font-size: 0.85rem;
+            line-height: 1;
+        }
+        .tag .remove-tag:hover {
+            opacity: 1;
+            color: var(--danger);
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 3px 9px;
+            border-radius: 50px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .status-badge.in-progress {
+            background: var(--badge-progress-bg);
+            color: var(--badge-progress-text);
+        }
+        .status-badge.completed {
+            background: var(--badge-done-bg);
+            color: var(--badge-done-text);
+        }
+        .payment-badge {
+            padding: 3px 9px;
+            border-radius: 50px;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+        .payment-badge.paid {
+            background: var(--paid-bg);
+            color: var(--paid-text);
+        }
+        .payment-badge.partial {
+            background: var(--partial-bg);
+            color: var(--partial-text);
+        }
+        .payment-badge.debt {
+            background: var(--debt-bg);
+            color: var(--debt-text);
+        }
+
+        /* List items */
+        .list-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 10px 13px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition);
+        }
+        .list-item:hover {
+            background: var(--glass-bg-hover);
+            border-color: var(--accent);
+        }
+
+        /* Finance Summary */
+        .fin-summary {
+            background: var(--glass-bg);
+            border-radius: var(--radius);
+            padding: 12px;
+            font-size: 0.78rem;
+            border: 1px solid var(--glass-border);
+        }
+        .fin-summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+        }
+        .fin-summary-row.total {
+            border-top: 1px solid var(--glass-border);
+            padding-top: 7px;
+            margin-top: 3px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--accent);
+        }
+        .fin-work-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            background: var(--row-hover);
+            border-radius: 8px;
+            font-size: 0.78rem;
+            flex-wrap: wrap;
+        }
+        .fin-work-row input {
+            padding: 4px 6px;
+            border-radius: 6px;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            font-family: var(--font);
+            text-align: right;
+            min-width: 45px;
+        }
+        .fin-work-row input:focus {
+            outline: none;
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 2px rgba(79, 143, 255, 0.08);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 11px 18px;
+            border-radius: 50px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.78rem;
+            z-index: 999;
+            animation: slideUp 0.3s, fadeOut 0.3s 2.6s forwards;
+            max-width: 90vw;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+        }
+
+        /* ========== НОВИЙ БЛОК: КЛІЄНТИ НА СЬОГОДНІ ========== */
+        .today-clients-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 14px 16px;
+            margin-bottom: 2px;
+        }
+        .today-clients-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        .today-clients-title {
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-primary);
+        }
+        .today-clients-toggle {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .today-clients-toggle:hover {
+            background: var(--glass-bg-hover);
+        }
+        .today-clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+        }
+        .today-client-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: all var(--transition);
+        }
+        .today-client-card:hover {
+            background: var(--glass-bg-hover);
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+        .today-client-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .today-client-car {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+        .today-client-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .today-client-phone {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .today-client-status {
+            align-self: flex-start;
+            margin-top: 2px;
+        }
+        .empty-message {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 16px;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+
+        /* Print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printArea,
+            #printArea * {
+                visibility: visible;
+            }
+            #printArea {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px 30px;
+                background: #fff !important;
+                color: #000 !important;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 13px;
+                line-height: 1.6;
+                z-index: 9999;
+            }
+            #printArea h2 {
+                font-size: 20px;
+                margin-bottom: 4px;
+            }
+            #printArea table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 10px 0;
+            }
+            #printArea th,
+            #printArea td {
+                border: 1px solid #ccc;
+                padding: 6px 8px;
+                text-align: left;
+                font-size: 12px;
+            }
+            #printArea th {
+                background: #f5f5f5;
+                font-weight: 700;
+            }
+            #printArea .print-total {
+                font-size: 16px;
+                font-weight: 700;
+                margin-top: 8px;
+            }
+        }
+
+        /* ========== АДАПТИВНІСТЬ ========== */
+
+        /* Планшети (до 1024px) */
+        @media (max-width: 1024px) {
+            .side-panel {
+                width: 380px;
+                padding: 12px;
+                max-height: calc(100vh - 100px);
+                max-height: calc(100dvh - 100px);
+                top: 85px;
+                font-size: 0.9rem;
+            }
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                font-size: 0.78rem;
+                padding: 7px 9px;
+            }
+            .btn {
+                font-size: 0.75rem;
+                padding: 7px 12px;
+                min-height: 34px;
+            }
+            .tab-btn {
+                font-size: 0.73rem;
+                padding: 6px 10px;
+            }
+            .month-cell {
+                min-height: 55px;
+                font-size: 0.68rem;
+            }
+            .calendar-title {
+                font-size: 0.9rem;
+            }
+            .header {
+                padding: 8px 10px;
+                gap: 6px;
+            }
+            .logo-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+            .logo-text {
+                font-size: 0.95rem;
+            }
+            .today-clients-section {
+                padding: 12px 14px;
+            }
+            .today-clients-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+        }
+
+        /* Планшети у портретній орієнтації / малі ноутбуки (до 900px) */
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .side-panel {
+                width: 100%;
+                position: static;
+                max-height: none;
+                top: auto;
+            }
+            .header {
+                gap: 6px;
+                padding: 8px 10px;
+            }
+            .tab-btn {
+                padding: 5px 8px;
+                font-size: 0.7rem;
+            }
+            .month-cell {
+                min-height: 45px;
+                font-size: 0.6rem;
+            }
+            .calendar-body {
+                max-height: 50vh;
+            }
+            .btn {
+                font-size: 0.7rem;
+                padding: 6px 10px;
+                min-height: 32px;
+            }
+            .btn-icon {
+                width: 30px;
+                height: 30px;
+                min-height: 30px;
+            }
+            .theme-toggle {
+                width: 32px;
+                height: 32px;
+                min-height: 32px;
+                font-size: 1rem;
+            }
+            .logo-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+            .logo-text {
+                font-size: 0.85rem;
+            }
+            .logo-sub {
+                font-size: 0.55rem;
+            }
+            .calendar-nav {
+                padding: 8px 10px;
+            }
+            .calendar-title {
+                font-size: 0.8rem;
+                padding: 4px 8px;
+            }
+            .fin-work-row {
+                gap: 3px;
+                padding: 4px 5px;
+                font-size: 0.7rem;
+            }
+            .fin-work-row input {
+                font-size: 0.68rem;
+                padding: 3px 4px;
+                min-width: 38px;
+            }
+            .today-clients-section {
+                padding: 10px 12px;
+            }
+            .today-clients-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Смартфони (до 600px) */
+        @media (max-width: 600px) {
+            .app-container {
+                padding: 6px 6px 12px;
+                gap: 5px;
+            }
+            .header {
+                padding: 6px 8px;
+                gap: 4px;
+                border-radius: var(--radius);
+                top: 6px;
+            }
+            .tab-nav {
+                order: 3;
+                width: 100%;
+                justify-content: flex-start;
+                border-radius: 40px;
+                padding: 2px;
+                gap: 1px;
+            }
+            .tab-btn {
+                font-size: 0.65rem;
+                padding: 5px 8px;
+            }
+            .btn {
+                font-size: 0.68rem;
+                padding: 5px 9px;
+                min-height: 30px;
+                gap: 3px;
+            }
+            .btn-icon {
+                width: 28px;
+                height: 28px;
+                min-height: 28px;
+                font-size: 0.7rem;
+            }
+            .theme-toggle {
+                width: 28px;
+                height: 28px;
+                min-height: 28px;
+                font-size: 0.85rem;
+            }
+            .logo-icon {
+                width: 26px;
+                height: 26px;
+                font-size: 0.8rem;
+                border-radius: 8px;
+            }
+            .logo-text {
+                font-size: 0.75rem;
+            }
+            .logo-sub {
+                font-size: 0.5rem;
+                letter-spacing: 1px;
+            }
+            .month-grid {
+                gap: 1px;
+                min-height: 350px;
+            }
+            .month-cell {
+                min-height: 38px;
+                padding: 1px 2px;
+                border-radius: 6px;
+                font-size: 0.55rem;
+            }
+            .month-cell .day-num {
+                font-size: 0.6rem;
+                padding: 0px 2px;
+            }
+            .month-cell.today .day-num {
+                width: 18px;
+                height: 18px;
+                font-size: 0.55rem;
+            }
+            .cell-appt {
+                font-size: 0.5rem;
+                padding: 0px 3px;
+            }
+            .month-day-header {
+                font-size: 0.55rem;
+                padding: 4px 1px;
+            }
+            .calendar-nav {
+                padding: 6px 8px;
+                gap: 3px;
+            }
+            .calendar-title {
+                font-size: 0.7rem;
+            }
+            .side-panel {
+                padding: 10px;
+                border-radius: var(--radius);
+                gap: 5px;
+            }
+            .form-group label {
+                font-size: 0.6rem;
+            }
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                font-size: 0.72rem;
+                padding: 6px 8px;
+            }
+            .form-row {
+                gap: 3px;
+            }
+            .fin-work-row {
+                gap: 2px;
+                padding: 3px 4px;
+                font-size: 0.65rem;
+            }
+            .fin-work-row input {
+                font-size: 0.6rem;
+                padding: 2px 3px;
+                min-width: 32px;
+                width: 40px;
+            }
+            .fin-work-row strong {
+                font-size: 0.65rem;
+                min-width: 35px;
+            }
+            .tags-container {
+                gap: 2px;
+                padding: 2px;
+            }
+            .tag {
+                font-size: 0.6rem;
+                padding: 3px 7px;
+            }
+            .btn-sm {
+                font-size: 0.65rem;
+                padding: 4px 7px;
+                min-height: 26px;
+            }
+            .list-item {
+                padding: 8px 10px;
+                font-size: 0.7rem;
+            }
+            .fin-summary {
+                font-size: 0.68rem;
+                padding: 8px;
+            }
+            .autocomplete-item {
+                font-size: 0.68rem;
+                padding: 5px 8px;
+            }
+            .toast {
+                font-size: 0.7rem;
+                padding: 8px 14px;
+                bottom: 12px;
+                right: 10px;
+                max-width: 85vw;
+            }
+            #calendarStats {
+                font-size: 0.55rem;
+            }
+            .today-clients-section {
+                padding: 8px 10px;
+            }
+            .today-clients-title {
+                font-size: 0.85rem;
+            }
+            .today-client-card {
+                padding: 10px 12px;
+            }
+            .today-client-name {
+                font-size: 0.8rem;
+            }
+            .today-client-car,
+            .today-client-time,
+            .today-client-phone {
+                font-size: 0.7rem;
+            }
+            .empty-message {
+                font-size: 0.75rem;
+                padding: 12px;
+            }
+        }
+
+        /* Дуже маленькі смартфони (до 380px) */
+        @media (max-width: 380px) {
+            .header {
+                padding: 4px 5px;
+                gap: 2px;
+            }
+            .logo-icon {
+                width: 22px;
+                height: 22px;
+                font-size: 0.65rem;
+                border-radius: 6px;
+            }
+            .logo-text {
+                font-size: 0.65rem;
+            }
+            .logo-sub {
+                font-size: 0.42rem;
+            }
+            .tab-btn {
+                font-size: 0.58rem;
+                padding: 4px 6px;
+            }
+            .btn {
+                font-size: 0.6rem;
+                padding: 4px 7px;
+                min-height: 26px;
+                gap: 2px;
+            }
+            .btn-icon {
+                width: 24px;
+                height: 24px;
+                min-height: 24px;
+            }
+            .theme-toggle {
+                width: 24px;
+                height: 24px;
+                min-height: 24px;
+                font-size: 0.75rem;
+            }
+            .month-cell {
+                min-height: 30px;
+                font-size: 0.48rem;
+                border-radius: 4px;
+                padding: 1px;
+            }
+            .month-cell .day-num {
+                font-size: 0.5rem;
+            }
+            .month-cell.today .day-num {
+                width: 15px;
+                height: 15px;
+                font-size: 0.45rem;
+            }
+            .cell-appt {
+                font-size: 0.42rem;
+                padding: 0px 2px;
+            }
+            .month-day-header {
+                font-size: 0.5rem;
+                padding: 3px 0px;
+            }
+            .calendar-title {
+                font-size: 0.6rem;
+            }
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                font-size: 0.65rem;
+                padding: 5px 6px;
+            }
+            .fin-work-row {
+                flex-wrap: wrap;
+                gap: 1px;
+                font-size: 0.6rem;
+            }
+            .fin-work-row input {
+                width: 35px;
+                min-width: 28px;
+                font-size: 0.55rem;
+            }
+            .today-clients-section {
+                padding: 6px 8px;
+            }
+            .today-clients-title {
+                font-size: 0.75rem;
+            }
+            .today-client-card {
+                padding: 8px 10px;
+            }
+            .today-client-name {
+                font-size: 0.72rem;
+            }
+            .today-client-car,
+            .today-client-time,
+            .today-client-phone {
+                font-size: 0.65rem;
+            }
+            .empty-message {
+                font-size: 0.7rem;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="appContainer">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-section" id="logoSection" title="На сьогодні">
+                <div class="logo-icon">A</div>
+                <div><div class="logo-text">Сервіс Аверс</div><div class="logo-sub">Автосервіс CRM</div></div>
+            </div>
+            <nav class="tab-nav" id="tabNav">
+                <button class="tab-btn active" data-tab="calendar">📅 Календар</button>
+                <button class="tab-btn" data-tab="finance">💰 Фінанси</button>
+                <button class="tab-btn" data-tab="clients">👥 Клієнти</button>
+            </nav>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="Змінити тему">🌙</button>
+                <button class="btn btn-primary" id="btnNewAppointment">+ Новий запис</button>
+            </div>
+        </header>
+
+        <!-- ====== КАЛЕНДАР ====== -->
+        <div class="tab-content active" id="tabCalendar">
+            <div class="today-clients-section" id="todayClientsSection">
+                <div class="today-clients-header" id="todayClientsToggle">
+                    <div class="today-clients-title">📋 Клієнти на сьогодні</div>
+                    <button class="today-clients-toggle" id="todayClientsArrow" aria-label="Згорнути/розгорнути">▼</button>
+                </div>
+                <div class="today-clients-grid" id="todayClientsGrid"></div>
+            </div>
+            <div class="main-content">
+                <div class="calendar-panel">
+                    <div class="calendar-nav">
+                        <div style="display:flex;gap:4px;">
+                            <button class="btn-icon" id="btnPrev">◀</button>
+                            <button class="btn btn-sm btn-glass" id="btnToday">📅 Сьогодні</button>
+                            <button class="btn-icon" id="btnNext">▶</button>
+                        </div>
+                        <div class="calendar-title" id="calendarTitle"></div>
+                        <div style="font-size:0.7rem;color:var(--text-muted);" id="calendarStats"></div>
+                    </div>
+                    <div class="calendar-body" id="calendarBody"></div>
+                </div>
+                <aside class="side-panel" id="sidePanelCalendar">
+                    <h3 id="formTitle" style="margin:0 0 4px;">📝 Новий запис</h3>
+                    <div class="form-group autocomplete-wrapper">
+                        <label>👤 Клієнт</label>
+                        <input type="text" id="inputClientName" placeholder="Прізвище Ім'я" autocomplete="off">
+                        <div class="autocomplete-dropdown" id="dropdownClientName"></div>
+                    </div>
+                    <div class="form-group"><label>📞 Телефон</label><input type="tel" id="inputPhone" placeholder="+380"></div>
+                    <div class="form-row">
+                        <div class="form-group autocomplete-wrapper">
+                            <label>🚗 Марка</label>
+                            <input type="text" id="inputCarBrand" placeholder="Почніть вводити..." autocomplete="off">
+                            <div class="autocomplete-dropdown" id="dropdownCarBrand"></div>
+                        </div>
+                        <div class="form-group autocomplete-wrapper">
+                            <label>Модель</label>
+                            <input type="text" id="inputCarModel" placeholder="Спочатку марку" autocomplete="off">
+                            <div class="autocomplete-dropdown" id="dropdownCarModel"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>📅 Рік випуску</label><input type="number" id="inputCarYear" placeholder="2020" min="1970" max="2030"></div>
+                        <div class="form-group" style="visibility:hidden;pointer-events:none;"><label>&nbsp;</label><input type="text" disabled style="opacity:0;"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>📅 Дата</label><input type="date" id="inputDate"></div>
+                        <div class="form-group"><label>⏰ Час</label><input type="time" id="inputTime" value="10:00"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>🔧 Роботи</label>
+                        <div class="autocomplete-wrapper" style="margin-bottom:4px;">
+                            <input type="text" id="inputWorkSearch" placeholder="🔍 Пошук або додати роботу..." autocomplete="off" style="width:100%;">
+                            <div class="autocomplete-dropdown" id="dropdownWorkSearch"></div>
+                        </div>
+                        <div class="tags-container" id="tagsWorks"></div>
+                    </div>
+                    <div class="form-group"><label>💬 Коментар</label><textarea id="inputComment" rows="2"></textarea></div>
+                    <div class="form-group"><label>📌 Статус</label><select id="inputStatus"><option value="in-progress">🟧 В роботі</option><option value="completed">🟩 Виконано</option></select></div>
+                    <input type="hidden" id="inputEditId" value="">
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <button class="btn btn-primary" id="btnSave" style="flex:1;min-width:100px;">💾 Зберегти</button>
+                        <button class="btn btn-glass" id="btnCancel" style="flex:1;min-width:100px;">✖ Скасувати</button>
+                        <button class="btn btn-danger btn-sm" id="btnDelete" style="display:none;">🗑 Видалити</button>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- ====== ФІНАНСИ ====== -->
+        <div class="tab-content" id="tabFinance">
+            <div class="main-content" style="flex-direction:column;">
+                <div style="display:flex;gap:14px;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:300px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:14px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+                            <h3>🧾 Фінансові чеки</h3>
+                            <button class="btn btn-primary btn-sm" id="btnNewCheck">+ Новий чек</button>
+                        </div>
+                        <div id="checkList" style="display:flex;flex-direction:column;gap:5px;max-height:450px;overflow-y:auto;"></div>
+                        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+                            <div style="flex:1;min-width:120px;background:var(--glass-bg);border-radius:12px;padding:10px;text-align:center;border:1px solid var(--glass-border);">
+                                <div style="font-size:1.3rem;font-weight:700;color:var(--success);" id="finTodayRevenue">0</div>
+                                <div style="font-size:0.6rem;color:var(--text-muted);">Виручка сьогодні</div>
+                            </div>
+                            <div style="flex:1;min-width:120px;background:var(--glass-bg);border-radius:12px;padding:10px;text-align:center;border:1px solid var(--glass-border);">
+                                <div style="font-size:1.3rem;font-weight:700;color:var(--danger);" id="finTotalDebt">0</div>
+                                <div style="font-size:0.6rem;color:var(--text-muted);">Загальний борг</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="side-panel" id="sidePanelFinance" style="position:static;max-height:none;width:520px;max-width:100%;">
+                        <h3 id="finFormTitle" style="margin:0 0 4px;">🧾 Новий чек</h3>
+                        <div class="form-group"><label>🔗 Вибрати запис</label><select id="finSelectAppointment"><option value="">— Оберіть запис —</option></select></div>
+                        <div class="form-group"><label>👤 Клієнт</label><input type="text" id="finClientName"></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>🚗 Марка</label><input type="text" id="finCarBrand"></div>
+                            <div class="form-group"><label>Модель</label><input type="text" id="finCarModel"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>📅 Рік</label><input type="text" id="finCarYear"></div>
+                            <div class="form-group"><label>🚘 Номер</label><input type="text" id="finPlateNumber"></div>
+                        </div>
+                        <div class="form-group"><label>📅 Дата візиту</label><input type="date" id="finDate"></div>
+                        <div style="border-top:1px solid var(--glass-border);padding-top:8px;">
+                            <label style="font-weight:700;font-size:0.75rem;">🔧 Роботи</label>
+                            <div style="display:flex;gap:4px;margin:4px 0;">
+                                <div class="autocomplete-wrapper" style="flex:1;">
+                                    <input type="text" id="finWorkSearch" placeholder="Додати роботу..." autocomplete="off" style="width:100%;padding:6px 8px;font-size:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);">
+                                    <div class="autocomplete-dropdown" id="dropdownFinWorkSearch"></div>
+                                </div>
+                            </div>
+                            <div id="finWorksList" style="display:flex;flex-direction:column;gap:3px;max-height:180px;overflow-y:auto;margin-top:4px;"></div>
+                        </div>
+                        <div style="border-top:1px solid var(--glass-border);padding-top:8px;">
+                            <label style="font-weight:700;font-size:0.75rem;">🔩 Запчастини</label>
+                            <div style="display:flex;gap:4px;margin:4px 0;">
+                                <div class="autocomplete-wrapper" style="flex:1;">
+                                    <input type="text" id="finPartSearch" placeholder="Додати запчастину..." autocomplete="off" style="width:100%;padding:6px 8px;font-size:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);">
+                                    <div class="autocomplete-dropdown" id="dropdownFinPartSearch"></div>
+                                </div>
+                            </div>
+                            <div id="finPartsList" style="display:flex;flex-direction:column;gap:3px;max-height:150px;overflow-y:auto;margin-top:4px;"></div>
+                        </div>
+                        <div class="form-group"><label>➕ Додаткові витрати (грн)</label><input type="number" id="finExtraCost" value="0" min="0" step="0.01"></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>🏷 Знижка (%)</label><input type="number" id="finDiscount" value="0" min="0" max="100"></div>
+                            <div class="form-group"><label>💵 Передоплата (грн)</label><input type="number" id="finPrepayment" value="0" min="0" step="0.01"></div>
+                        </div>
+                        <div class="form-group"><label>💳 Статус оплати</label><select id="finPaymentStatus"><option value="paid">✅ Оплачено</option><option value="partial">⚠️ Частково</option><option value="debt">❌ Борг</option></select></div>
+                        <div class="fin-summary">
+                            <div class="fin-summary-row"><span>Сума робіт:</span><strong id="finSumWorks">0.00</strong></div>
+                            <div class="fin-summary-row"><span>Запчастини:</span><strong id="finSumParts">0.00</strong></div>
+                            <div class="fin-summary-row"><span>Додаткові витрати:</span><strong id="finSumExtra">0.00</strong></div>
+                            <div class="fin-summary-row"><span>Знижка:</span><strong id="finDiscountAmount">0.00</strong></div>
+                            <div class="fin-summary-row total"><span>💰 Загальна сума:</span><strong id="finTotalSum">0.00</strong></div>
+                            <div class="fin-summary-row" style="color:var(--success);"><span>📈 Прибуток:</span><strong id="finProfit">0.00</strong></div>
+                            <div class="fin-summary-row"><span>💵 До оплати:</span><strong id="finToPay">0.00</strong></div>
+                        </div>
+                        <input type="hidden" id="finEditId" value="">
+                        <input type="hidden" id="finAppointmentId" value="">
+                        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                            <button class="btn btn-primary" id="btnSaveCheck" style="flex:1;min-width:100px;">💾 Зберегти чек</button>
+                            <button class="btn btn-glass" id="btnCancelCheck" style="flex:1;min-width:100px;">✖ Скасувати</button>
+                        </div>
+                        <div style="display:flex;gap:6px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--glass-border);">
+                            <button class="btn btn-sm btn-glass" id="btnPrintCheck">🖨 Друк</button>
+                            <button class="btn btn-sm btn-glass" id="btnCopyCheck">📋 Копіювати</button>
+                            <button class="btn btn-sm btn-glass" id="btnPdfCheck">📥 PDF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== КЛІЄНТИ ====== -->
+        <div class="tab-content" id="tabClients">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                <div class="autocomplete-wrapper" style="flex:1;min-width:250px;">
+                    <input type="text" id="clientSearchInput" placeholder="🔍 Пошук клієнта…" autocomplete="off" style="width:100%;padding:10px 14px;border-radius:50px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);">
+                    <div class="autocomplete-dropdown" id="dropdownClientSearch"></div>
+                </div>
+                <button class="btn btn-primary btn-sm" id="btnRefreshClients">🔄 Оновити</button>
+            </div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;">
+                <div style="flex:2;min-width:280px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:12px;max-height:50vh;max-height:50dvh;overflow-y:auto;" id="clientsListContainer"></div>
+                <div style="flex:3;min-width:320px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:12px;max-height:50vh;max-height:50dvh;overflow-y:auto;" id="clientDetailPanel"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Прихована область для друку -->
+    <div id="printArea" style="display:none;"></div>
+    <div id="toastContainer"></div>
+
+    <!-- ====== ПІДКЛЮЧЕННЯ FIREBASE ====== -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ========== КОНФІГУРАЦІЯ FIREBASE ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyCbM611eu3lZK-5yul-kj2vw7bWuUxX_J0",
+            authDomain: "avers-b08ac.firebaseapp.com",
+            projectId: "avers-b08ac",
+            storageBucket: "avers-b08ac.firebasestorage.app",
+            messagingSenderId: "354438551899",
+            appId: "1:354438551899:web:b447545e7a72d410d9627e",
+            measurementId: "G-46KVS0SJWD"
+        };
+
+        // Ініціалізація Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Один документ для всіх даних (без авторизації – спільний)
+        const DATA_DOC = db.collection('appData').doc('shared');
+
+        // ========== ОСНОВНИЙ КОД ==========
+        (() => {
+            const $ = (s) => document.querySelector(s);
+            const $$ = (s) => document.querySelectorAll(s);
+
+            const STORAGE_THEME = 'avers_theme'; // тема локально для миттєвого застосування
+
+            // Каталоги за замовчуванням
+            const DEFAULT_CAR_CATALOG = {
+                'Acura': ['MDX', 'RDX', 'TLX', 'ILX', 'NSX'],
+                'Alfa Romeo': ['Giulia', 'Stelvio', 'Tonale', '147', '156', '159'],
+                'Audi': ['A1', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'Q2', 'Q3', 'Q5', 'Q7', 'Q8', 'e-tron', 'TT', 'R8', '80', '100'],
+                'BMW': ['1 Series', '2 Series', '3 Series', '4 Series', '5 Series', '6 Series', '7 Series', '8 Series', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'Z4', 'M3', 'M5', 'E36', 'E39', 'E46', 'E60', 'E90', 'F10', 'F30', 'G20', 'G30'],
+                'BYD': ['Song Plus', 'Tang', 'Han', 'Seagull', 'Dolphin', 'Atto 3'],
+                'Chery': ['Tiggo 2', 'Tiggo 4', 'Tiggo 7', 'Tiggo 8', 'Arrizo 5', 'Arrizo 8'],
+                'Chevrolet': ['Aveo', 'Cruze', 'Malibu', 'Camaro', 'Corvette', 'Trailblazer', 'Tahoe', 'Suburban', 'Spark', 'Captiva', 'Orlando', 'Equinox', 'Traverse'],
+                'Citroen': ['C1', 'C2', 'C3', 'C4', 'C5', 'Berlingo', 'Jumpy', 'Jumper', 'C-Elysee', 'C4 Picasso'],
+                'Daewoo': ['Lanos', 'Matiz', 'Nexia', 'Sens', 'Nubira', 'Leganza'],
+                'Ford': ['Focus', 'Fiesta', 'Mondeo', 'Kuga', 'Puma', 'Explorer', 'Mustang', 'Ranger', 'Transit', 'Edge', 'Escape'],
+                'Geely': ['Coolray', 'Atlas', 'Emgrand', 'Tugella', 'Monjaro'],
+                'Honda': ['Civic', 'Accord', 'CR-V', 'HR-V', 'Jazz', 'Pilot', 'Odyssey', 'Insight', 'e:Ny1'],
+                'Hyundai': ['Solaris', 'Elantra', 'Sonata', 'Tucson', 'Santa Fe', 'Palisade', 'Creta', 'i10', 'i20', 'i30', 'Kona', 'Bayon', 'IONIQ'],
+                'Kia': ['Rio', 'Cerato', 'Optima', 'Sportage', 'Sorento', 'Mohave', 'Stinger', 'Ceed', 'Picanto', 'Soul', 'Niro', 'EV6'],
+                'Lexus': ['IS', 'ES', 'GS', 'LS', 'UX', 'NX', 'RX', 'GX', 'LX', 'RC', 'LC'],
+                'Mazda': ['2', '3', '6', 'CX-3', 'CX-5', 'CX-9', 'CX-30', 'CX-60', 'MX-5'],
+                'Mercedes-Benz': ['A-Class', 'B-Class', 'C-Class', 'E-Class', 'S-Class', 'CLA', 'CLS', 'GLA', 'GLB', 'GLC', 'GLE', 'GLS', 'G-Class', 'V-Class', 'W203', 'W204', 'W205', 'W211', 'W212', 'W213'],
+                'Mitsubishi': ['Lancer', 'Outlander', 'ASX', 'Eclipse Cross', 'Pajero', 'Colt', 'Space Star'],
+                'Nissan': ['Micra', 'Juke', 'Qashqai', 'X-Trail', 'Murano', 'Pathfinder', 'Patrol', 'Leaf', 'Ariya', 'Note', 'Primera'],
+                'Opel': ['Corsa', 'Astra', 'Insignia', 'Mokka', 'Crossland', 'Grandland', 'Zafira', 'Vivaro'],
+                'Peugeot': ['107', '108', '207', '208', '307', '308', '407', '508', '2008', '3008', '5008', 'Partner', 'Expert', 'Boxer'],
+                'Porsche': ['718', '911', 'Panamera', 'Cayenne', 'Macan', 'Taycan', 'Cayman', 'Boxster'],
+                'Renault': ['Clio', 'Megane', 'Laguna', 'Logan', 'Sandero', 'Duster', 'Kaptur', 'Arkana', 'Austral', 'Kangoo', 'Trafic', 'Master'],
+                'Skoda': ['Fabia', 'Octavia', 'Superb', 'Kodiaq', 'Karoq', 'Enyaq', 'Scala', 'Kamiq'],
+                'Subaru': ['Impreza', 'Legacy', 'Outback', 'Forester', 'XV', 'BRZ', 'WRX'],
+                'Suzuki': ['Swift', 'Baleno', 'Vitara', 'S-Cross', 'Jimny', 'Ignis', 'Across'],
+                'Tesla': ['Model S', 'Model 3', 'Model X', 'Model Y', 'Cybertruck'],
+                'Toyota': ['Yaris', 'Corolla', 'Camry', 'RAV4', 'Highlander', 'Land Cruiser Prado', 'Land Cruiser', 'Hilux', 'C-HR', 'Avensis', 'Prius', 'Supra', 'bZ4X', 'Auris', 'Verso'],
+                'Volkswagen': ['Polo', 'Golf', 'Passat', 'Tiguan', 'Touareg', 'T-Roc', 'T-Cross', 'ID.3', 'ID.4', 'ID.Buzz', 'Arteon', 'Caddy', 'Multivan'],
+                'Volvo': ['S60', 'S90', 'V40', 'V60', 'V90', 'XC40', 'XC60', 'XC90', 'C40'],
+            };
+
+            const DEFAULT_WORK_CATALOG = [
+                'Заміна масла', 'Заміна масляного фільтра', 'Заміна повітряного фільтра',
+                'Заміна паливного фільтра', 'Заміна салонного фільтра',
+                'Заміна гальмівних колодок (передніх)', 'Заміна гальмівних колодок (задніх)',
+                'Заміна гальмівних дисків', 'Заміна ременя ГРМ', 'Заміна ланцюга ГРМ',
+                "Комп'ютерна діагностика", 'Діагностика ходової', 'Ремонт ходової',
+                'Розвал-сходження', 'Шиномонтаж (4 колеса)', 'Балансування (4 колеса)',
+                'Ремонт двигуна', 'Заміна свічок запалювання', 'Заміна акумулятора',
+                'Мийка автомобіля', 'Полірування кузова', 'Хімчистка салону',
+                'Заміна амортизаторів', 'Ремонт кондиціонера', 'Заправка кондиціонера',
+                'Заміна зчеплення', 'Ремонт КПП', 'Заміна турбіни', 'Чистка інжектора'
+            ];
+
+            const DEFAULT_PARTS_CATALOG = [
+                'Масляний фільтр', 'Повітряний фільтр', 'Паливний фільтр', 'Салонний фільтр',
+                'Моторна олива 5W-30 (5л)', 'Моторна олива 5W-40 (5л)', 'Моторна олива 10W-40 (5л)',
+                'Гальмівна рідина DOT-4 (1л)', 'Антифриз (5л)', 'Гальмівні колодки (комплект)',
+                'Гальмівні диски', 'Амортизатор передній', 'Амортизатор задній',
+                'Свічки запалювання (комплект)', 'Акумулятор 60Ah', 'Акумулятор 75Ah',
+                'Ремінь ГРМ', 'Ланцюг ГРМ', 'Натяжник ременя', 'Помпа водяна',
+                'Зчеплення (комплект)', 'Турбіна', 'Радіатор', 'Стартер', 'Генератор'
+            ];
+
+            // ========== ГЛОБАЛЬНИЙ СТАН ==========
+            let appointments = [];
+            let checks = [];
+            let clientsDB = {};
+            let workCatalog = [...DEFAULT_WORK_CATALOG];
+            let partsCatalog = [...DEFAULT_PARTS_CATALOG];
+            let carCatalog = { ...DEFAULT_CAR_CATALOG };
+            let clientNames = [];
+            let theme = 'dark';
+            let currentDate = new Date();
+            let selectedDate = new Date();
+            let editingId = null;
+            let selectedWorks = [];
+            let finWorks = [];
+            let finParts = [];
+            let finEditId = null;
+            let finAppointmentId = null;
+            let isTodayClientsVisible = true;
+
+            // ========== ЗАВАНТАЖЕННЯ / ЗБЕРЕЖЕННЯ (Firestore) ==========
+            async function loadData() {
+                try {
+                    const docSnap = await DATA_DOC.get();
+                    if (docSnap.exists) {
+                        const data = docSnap.data();
+                        appointments = data.appointments || [];
+                        checks = data.checks || [];
+                        clientsDB = data.clientsDB || {};
+                        workCatalog = data.workCatalog || [...DEFAULT_WORK_CATALOG];
+                        partsCatalog = data.partsCatalog || [...DEFAULT_PARTS_CATALOG];
+                        carCatalog = { ...DEFAULT_CAR_CATALOG, ...data.carCatalog };
+                        clientNames = data.clientNames || [];
+                    }
+                } catch (e) {
+                    console.error('Помилка завантаження з Firestore:', e);
+                }
+                updateClientNamesFromData();
+            }
+
+            async function saveAll() {
+                try {
+                    await DATA_DOC.set({
+                        appointments,
+                        checks,
+                        clientsDB,
+                        workCatalog,
+                        partsCatalog,
+                        carCatalog,
+                        clientNames,
+                        theme
+                    }, { merge: true });
+                } catch (e) {
+                    showToast('❌ Помилка збереження у хмарі!');
+                    console.error(e);
+                }
+            }
+
+            function updateClientNamesFromData() {
+                const set = new Set(clientNames);
+                appointments.forEach(a => { if (a.clientName) set.add(a.clientName.trim()); });
+                checks.forEach(c => { if (c.clientName) set.add(c.clientName.trim()); });
+                Object.values(clientsDB).forEach(c => { if (c.name) set.add(c.name.trim()); });
+                clientNames = [...set].filter(Boolean).sort((a, b) => a.localeCompare(b, 'uk'));
+            }
+
+            function loadTheme() {
+                theme = localStorage.getItem(STORAGE_THEME) || 'dark';
+                applyTheme();
+            }
+
+            function saveTheme() {
+                localStorage.setItem(STORAGE_THEME, theme);
+                DATA_DOC.set({ theme }, { merge: true }).catch(() => {});
+            }
+
+            function applyTheme() {
+                document.documentElement.setAttribute('data-theme', theme);
+                $('#themeToggle').textContent = theme === 'dark' ? '☀️' : '🌙';
+            }
+
+            function toggleTheme() {
+                theme = theme === 'dark' ? 'light' : 'dark';
+                applyTheme();
+                saveTheme();
+            }
+
+            // ========== ДОПОМІЖНІ ФУНКЦІЇ ==========
+            function generateId() {
+                return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+            }
+
+            function formatDate(d) {
+                const dd = new Date(d);
+                if (isNaN(dd.getTime())) return '';
+                const y = dd.getFullYear(),
+                      m = String(dd.getMonth() + 1).padStart(2, '0'),
+                      day = String(dd.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            }
+
+            function parseDate(str) {
+                if (!str) return new Date();
+                const p = str.split('-');
+                if (p.length !== 3) return new Date();
+                const [y, m, d] = p.map(Number);
+                if (isNaN(y) || isNaN(m) || isNaN(d)) return new Date();
+                return new Date(y, m - 1, d);
+            }
+
+            function isSameDay(d1, d2) {
+                return d1 && d2 && d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+            }
+
+            function isToday(d) {
+                return isSameDay(d, new Date());
+            }
+
+            function normalizeStr(s) {
+                return (s || '').toLowerCase().trim().replace(/[^a-zа-яіїєґ0-9\s\-\.\/]/g, '');
+            }
+
+            function getClientProfileKey(name) {
+                return normalizeStr(name);
+            }
+
+            function showToast(msg) {
+                const t = document.createElement('div');
+                t.className = 'toast';
+                t.textContent = msg;
+                $('#toastContainer').appendChild(t);
+                setTimeout(() => { if (t.parentNode) t.remove(); }, 2900);
+            }
+
+            // ========== КЛІЄНТИ НА СЬОГОДНІ ==========
+            function renderTodayClients() {
+                const grid = $('#todayClientsGrid');
+                if (!grid) return;
+                const todayStr = formatDate(new Date());
+                const todayAppts = appointments.filter(a => a.date === todayStr);
+                
+                if (todayAppts.length === 0) {
+                    grid.innerHTML = '<div class="empty-message">На сьогодні записів немає.</div>';
+                } else {
+                    todayAppts.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+                    grid.innerHTML = todayAppts.map(a => {
+                        const statusClass = a.status === 'completed' ? 'completed' : 'in-progress';
+                        const statusText = a.status === 'completed' ? '🟩 Виконано' : '🟧 В роботі';
+                        const phoneHtml = a.phone ? `<div class="today-client-phone">📞 ${a.phone}</div>` : '';
+                        const timeDisplay = a.time ? a.time.slice(0, 5) : '—';
+                        return `
+                            <div class="today-client-card" data-appointment-id="${a.id}">
+                                <div class="today-client-name">
+                                    <span>👤</span> ${a.clientName || 'Без імені'}
+                                </div>
+                                <div class="today-client-car">🚗 ${a.carBrand || '—'} ${a.carModel || ''}</div>
+                                <div class="today-client-time">⏰ ${timeDisplay}</div>
+                                ${phoneHtml}
+                                <span class="status-badge today-client-status ${statusClass}">${statusText}</span>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                grid.style.display = isTodayClientsVisible ? '' : 'none';
+                const arrow = $('#todayClientsArrow');
+                if (arrow) arrow.textContent = isTodayClientsVisible ? '▼' : '▲';
+
+                grid.querySelectorAll('.today-client-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const apptId = card.dataset.appointmentId;
+                        const appt = appointments.find(a => a.id === apptId);
+                        if (appt) {
+                            fillCalendarFormForEdit(appt);
+                            selectedDate = parseDate(appt.date);
+                            renderCalendar();
+                            switchTab('calendar');
+                            $('#sidePanelCalendar').scrollIntoView({ behavior: 'smooth' });
+                        }
+                    });
+                });
+            }
+
+            function toggleTodayClients() {
+                isTodayClientsVisible = !isTodayClientsVisible;
+                const grid = $('#todayClientsGrid');
+                const arrow = $('#todayClientsArrow');
+                if (grid) grid.style.display = isTodayClientsVisible ? '' : 'none';
+                if (arrow) arrow.textContent = isTodayClientsVisible ? '▼' : '▲';
+            }
+
+            // ========== АВТОДОПОВНЕННЯ ==========
+            function setupAutocomplete(inputEl, dropdownEl, sourceArray, options = {}) {
+                const { onSelect, allowAddNew = false, addNewLabel = '➕ Додати новий: ', filterFn = null, displayFn = null, minChars = 1, clearAfterSelect = true } = options;
+                let activeIdx = -1;
+
+                inputEl.addEventListener('input', () => {
+                    const val = normalizeStr(inputEl.value);
+                    dropdownEl.innerHTML = '';
+                    activeIdx = -1;
+                    if (!val || val.length < minChars) { dropdownEl.classList.remove('show'); return; }
+                    let matches;
+                    if (filterFn) {
+                        matches = filterFn(val);
+                    } else if (Array.isArray(sourceArray) && typeof sourceArray[0] === 'string') {
+                        matches = sourceArray.filter(item => normalizeStr(item).includes(val)).slice(0, 10);
+                    } else if (Array.isArray(sourceArray) && typeof sourceArray[0] === 'object') {
+                        matches = sourceArray.filter(item => normalizeStr(item.name || item.label || '').includes(val)).slice(0, 10);
+                    } else {
+                        matches = [];
+                    }
+                    if (matches.length === 0 && allowAddNew && val.length >= 2) {
+                        const div = document.createElement('div');
+                        div.className = 'autocomplete-item add-new';
+                        div.textContent = addNewLabel + inputEl.value.trim();
+                        div.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+                            if (onSelect) onSelect({ name: inputEl.value.trim(), isNew: true });
+                            dropdownEl.classList.remove('show');
+                            if (clearAfterSelect) inputEl.value = '';
+                        });
+                        dropdownEl.appendChild(div);
+                    }
+                    matches.forEach((item, i) => {
+                        const div = document.createElement('div');
+                        div.className = 'autocomplete-item';
+                        div.textContent = displayFn ? displayFn(item) : (typeof item === 'string' ? item : (item.name || item.label || item));
+                        div.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+                            if (onSelect) onSelect(typeof item === 'string' ? { name: item, isNew: false } : { ...item, isNew: false });
+                            dropdownEl.classList.remove('show');
+                            if (clearAfterSelect) inputEl.value = '';
+                        });
+                        div.addEventListener('mouseenter', () => {
+                            dropdownEl.querySelectorAll('.autocomplete-item').forEach(d => d.classList.remove('active'));
+                            div.classList.add('active');
+                            activeIdx = i;
+                        });
+                        dropdownEl.appendChild(div);
+                    });
+                    if (dropdownEl.children.length > 0) dropdownEl.classList.add('show');
+                    else dropdownEl.classList.remove('show');
+                });
+
+                inputEl.addEventListener('keydown', (e) => {
+                    const items = dropdownEl.querySelectorAll('.autocomplete-item');
+                    if (!dropdownEl.classList.contains('show') || items.length === 0) return;
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        activeIdx = Math.min(activeIdx + 1, items.length - 1);
+                        updateActive(items, activeIdx);
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        activeIdx = Math.max(activeIdx - 1, 0);
+                        updateActive(items, activeIdx);
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (activeIdx >= 0 && items[activeIdx]) {
+                            items[activeIdx].dispatchEvent(new Event('mousedown', { bubbles: true }));
+                        } else if (items.length === 1) {
+                            items[0].dispatchEvent(new Event('mousedown', { bubbles: true }));
+                        }
+                    }
+                });
+
+                inputEl.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        dropdownEl.classList.remove('show');
+                        dropdownEl.innerHTML = '';
+                        activeIdx = -1;
+                    }, 200);
+                });
+
+                inputEl.addEventListener('focus', () => {
+                    if (inputEl.value.trim().length >= minChars) {
+                        const ev = new Event('input');
+                        inputEl.dispatchEvent(ev);
+                    }
+                });
+
+                function updateActive(items, idx) {
+                    items.forEach(d => d.classList.remove('active'));
+                    if (items[idx]) {
+                        items[idx].classList.add('active');
+                        items[idx].scrollIntoView({ block: 'nearest' });
+                    }
+                }
+            }
+
+            // ========== КАЛЕНДАР ==========
+            function renderCalendar() {
+                $('#calendarBody').innerHTML = '';
+                renderMonthView();
+                updateCalendarTitle();
+                updateCalendarStats();
+                renderTodayClients();
+            }
+
+            function updateCalendarTitle() {
+                const months = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+                $('#calendarTitle').textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+            }
+
+            function updateCalendarStats() {
+                const todayStr = formatDate(new Date());
+                const todayAppts = appointments.filter(a => a.date === todayStr);
+                const inProgress = todayAppts.filter(a => a.status === 'in-progress').length;
+                const completed = todayAppts.filter(a => a.status === 'completed').length;
+                $('#calendarStats').textContent = `Сьогодні: ${todayAppts.length} записів (🟧${inProgress} 🟩${completed})`;
+            }
+
+            function getAppointmentsForDate(ds) {
+                return appointments.filter(a => a.date === ds);
+            }
+
+            function renderMonthView() {
+                const y = currentDate.getFullYear(),
+                      m = currentDate.getMonth();
+                const firstDay = new Date(y, m, 1),
+                      lastDay = new Date(y, m + 1, 0);
+                const startDow = firstDay.getDay();
+                const adjustedStart = startDow === 0 ? 6 : startDow - 1;
+                const days = [];
+                const prevLast = new Date(y, m - 1, 0).getDate();
+                for (let i = adjustedStart - 1; i >= 0; i--) days.push({ date: new Date(y, m - 1, prevLast - i), isOtherMonth: true });
+                for (let i = 1; i <= lastDay.getDate(); i++) days.push({ date: new Date(y, m, i), isOtherMonth: false });
+                const rem = 42 - days.length;
+                for (let i = 1; i <= rem; i++) days.push({ date: new Date(y, m + 1, i), isOtherMonth: true });
+                const grid = document.createElement('div');
+                grid.className = 'month-grid';
+                ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'].forEach(n => {
+                    const h = document.createElement('div');
+                    h.className = 'month-day-header';
+                    h.textContent = n;
+                    grid.appendChild(h);
+                });
+                days.forEach(day => {
+                    const cell = document.createElement('div');
+                    cell.className = 'month-cell';
+                    if (day.isOtherMonth) cell.classList.add('other-month');
+                    if (isToday(day.date)) cell.classList.add('today');
+                    if (isSameDay(day.date, selectedDate)) cell.classList.add('selected');
+                    const ds = formatDate(day.date);
+                    cell.dataset.date = ds;
+                    const num = document.createElement('div');
+                    num.className = 'day-num';
+                    num.textContent = day.date.getDate();
+                    cell.appendChild(num);
+                    const ac = document.createElement('div');
+                    ac.className = 'cell-appointments';
+                    getAppointmentsForDate(ds).slice(0, 4).forEach(a => {
+                        const ae = document.createElement('div');
+                        ae.className = `cell-appt ${a.status || 'in-progress'}`;
+                        ae.textContent = `${a.time?.slice(0,5) || ''} ${(a.clientName || '?').split(' ')[0]}`;
+                        ae.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            fillCalendarFormForEdit(a);
+                            selectedDate = parseDate(a.date);
+                            renderCalendar();
+                        });
+                        ac.appendChild(ae);
+                    });
+                    cell.appendChild(ac);
+                    cell.addEventListener('click', () => {
+                        if (day.isOtherMonth) return;
+                        selectedDate = day.date;
+                        if (!isSameDay(currentDate, day.date)) currentDate = new Date(day.date);
+                        renderCalendar();
+                        if (!editingId) $('#inputDate').value = formatDate(selectedDate);
+                    });
+                    grid.appendChild(cell);
+                });
+                $('#calendarBody').appendChild(grid);
+            }
+
+            // ========== ФОРМА ЗАПИСУ ==========
+            function resetCalendarForm() {
+                editingId = null;
+                selectedWorks = [];
+                $('#inputEditId').value = '';
+                $('#formTitle').textContent = '📝 Новий запис';
+                $('#inputClientName').value = '';
+                $('#inputPhone').value = '';
+                $('#inputCarBrand').value = '';
+                $('#inputCarModel').value = '';
+                $('#inputCarYear').value = '';
+                $('#inputDate').value = formatDate(selectedDate);
+                $('#inputTime').value = '10:00';
+                $('#inputWorkSearch').value = '';
+                $('#inputComment').value = '';
+                $('#inputStatus').value = 'in-progress';
+                $('#btnDelete').style.display = 'none';
+                renderWorksTags();
+            }
+
+            function fillCalendarFormForEdit(a) {
+                editingId = a.id;
+                $('#inputEditId').value = a.id;
+                $('#formTitle').textContent = '✏️ Редагувати запис';
+                $('#inputClientName').value = a.clientName || '';
+                $('#inputPhone').value = a.phone || '';
+                $('#inputCarBrand').value = a.carBrand || '';
+                $('#inputCarModel').value = a.carModel || '';
+                $('#inputCarYear').value = a.carYear || '';
+                $('#inputDate').value = a.date || '';
+                $('#inputTime').value = a.time || '10:00';
+                $('#inputComment').value = a.comment || '';
+                $('#inputStatus').value = a.status || 'in-progress';
+                selectedWorks = [...(a.services || [])];
+                $('#btnDelete').style.display = 'inline-flex';
+                if (a.date) selectedDate = parseDate(a.date);
+                renderWorksTags();
+            }
+
+            function renderWorksTags() {
+                const container = $('#tagsWorks');
+                container.innerHTML = selectedWorks.map((w, i) => `
+                    <span class="tag">${w}<span class="remove-tag" data-idx="${i}">×</span></span>
+                `).join('');
+                if (selectedWorks.length === 0) {
+                    container.innerHTML = '<span style="color:var(--text-muted);font-size:0.7rem;padding:4px;">Немає вибраних робіт</span>';
+                }
+                container.querySelectorAll('.remove-tag').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const idx = parseInt(btn.dataset.idx);
+                        selectedWorks.splice(idx, 1);
+                        renderWorksTags();
+                    });
+                });
+            }
+
+            function addWorkToSelection(workName) {
+                if (!selectedWorks.includes(workName)) {
+                    selectedWorks.push(workName);
+                    renderWorksTags();
+                }
+            }
+
+            function saveAppointment() {
+                const cn = $('#inputClientName').value.trim();
+                const ph = $('#inputPhone').value.trim();
+                const cb = $('#inputCarBrand').value.trim();
+                const cm = $('#inputCarModel').value.trim();
+                const cy = $('#inputCarYear').value;
+                const dv = $('#inputDate').value;
+                const tv = $('#inputTime').value;
+                const comm = $('#inputComment').value.trim();
+                const st = $('#inputStatus').value || 'in-progress';
+
+                const data = {
+                    id: editingId || generateId(),
+                    clientName: cn,
+                    phone: ph,
+                    carBrand: cb,
+                    carModel: cm,
+                    carYear: cy,
+                    date: dv || formatDate(new Date()),
+                    time: tv || '10:00',
+                    services: [...selectedWorks],
+                    comment: comm,
+                    status: st,
+                    createdAt: editingId ? (appointments.find(a => a.id === editingId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
+                };
+
+                if (cn && !clientNames.includes(cn)) {
+                    clientNames.push(cn);
+                    clientNames.sort((a, b) => a.localeCompare(b, 'uk'));
+                }
+                if (cb && !carCatalog[cb]) carCatalog[cb] = [];
+                if (cb && cm && carCatalog[cb] && !carCatalog[cb].includes(cm)) {
+                    carCatalog[cb].push(cm);
+                    carCatalog[cb].sort();
+                }
+
+                const key = getClientProfileKey(cn);
+                if (!clientsDB[key]) clientsDB[key] = {
+                    name: cn,
+                    phones: [],
+                    cars: [],
+                    visitCount: 0,
+                    totalSpent: 0,
+                    lastVisit: null,
+                    createdAt: new Date().toISOString()
+                };
+                clientsDB[key].visitCount = (clientsDB[key].visitCount || 0) + 1;
+                clientsDB[key].lastVisit = new Date().toISOString();
+                if (ph && !clientsDB[key].phones.includes(ph)) clientsDB[key].phones.unshift(ph);
+                if (cb && cm) {
+                    const carEntry = { brand: cb, model: cm, year: cy };
+                    const exists = clientsDB[key].cars.findIndex(c => c.brand === cb && c.model === cm);
+                    if (exists >= 0) clientsDB[key].cars.splice(exists, 1);
+                    clientsDB[key].cars.unshift(carEntry);
+                    if (clientsDB[key].cars.length > 20) clientsDB[key].cars = clientsDB[key].cars.slice(0, 20);
+                }
+
+                if (editingId) {
+                    const idx = appointments.findIndex(a => a.id === editingId);
+                    if (idx >= 0) appointments[idx] = data;
+                    showToast('✅ Запис оновлено');
+                } else {
+                    appointments.push(data);
+                    showToast('✅ Запис створено');
+                }
+                saveAll();
+                updateClientNamesFromData();
+                resetCalendarForm();
+                selectedDate = parseDate(data.date);
+                renderCalendar();
+                populateFinAppointmentsSelect();
+            }
+
+            function deleteAppointment(id) {
+                const a = appointments.find(x => x.id === id);
+                if (!a) return;
+                if (confirm(`Видалити запис для ${a.clientName || 'без імені'}?`)) {
+                    appointments = appointments.filter(x => x.id !== id);
+                    saveAll();
+                    if (editingId === id) resetCalendarForm();
+                    renderCalendar();
+                    populateFinAppointmentsSelect();
+                    showToast('🗑 Запис видалено');
+                }
+            }
+
+            // ========== ФІНАНСИ (без змін) ==========
+            function populateFinAppointmentsSelect() {
+                const select = $('#finSelectAppointment');
+                select.innerHTML = '<option value="">— Оберіть запис —</option>';
+                [...appointments].sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.time || '').localeCompare(a.time || '')).forEach(a => {
+                    const opt = document.createElement('option');
+                    opt.value = a.id;
+                    opt.textContent = `${a.date} ${a.time?.slice(0,5) || ''} — ${a.clientName || '?'} (${a.carBrand || ''} ${a.carModel || ''})`;
+                    select.appendChild(opt);
+                });
+            }
+
+            function autoFillFinanceFromAppointment(appointmentId) {
+                if (!appointmentId) {
+                    finWorks = [];
+                    finParts = [];
+                    finAppointmentId = null;
+                    $('#finAppointmentId').value = '';
+                    $('#finClientName').value = '';
+                    $('#finCarBrand').value = '';
+                    $('#finCarModel').value = '';
+                    $('#finCarYear').value = '';
+                    $('#finPlateNumber').value = '';
+                    $('#finDate').value = formatDate(new Date());
+                    updateFinWorksList();
+                    updateFinPartsList();
+                    updateFinSummary();
+                    return;
+                }
+                const a = appointments.find(x => x.id === appointmentId);
+                if (!a) return;
+                finAppointmentId = a.id;
+                $('#finAppointmentId').value = a.id;
+                $('#finClientName').value = a.clientName || '';
+                $('#finCarBrand').value = a.carBrand || '';
+                $('#finCarModel').value = a.carModel || '';
+                $('#finCarYear').value = a.carYear || '';
+                $('#finPlateNumber').value = '';
+                $('#finDate').value = a.date || formatDate(new Date());
+                finWorks = (a.services || []).map(sName => ({ customName: sName, name: sName, price: 0, quantity: 1 }));
+                finParts = [];
+                updateFinWorksList();
+                updateFinPartsList();
+                updateFinSummary();
+            }
+
+            function updateFinWorksList() {
+                const container = $('#finWorksList');
+                if (!finWorks.length) {
+                    container.innerHTML = '<div style="color:var(--text-muted);font-size:0.7rem;padding:8px;">Немає робіт. Виберіть запис або додайте вручну.</div>';
+                    return;
+                }
+                container.innerHTML = finWorks.map((fw, i) => `
+                    <div class="fin-work-row" data-fw-index="${i}">
+                        <span style="flex:2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.75rem;">${fw.customName || fw.name || 'Робота'}</span>
+                        <span style="font-size:0.65rem;color:var(--text-muted);">Ціна:</span>
+                        <input type="number" value="${fw.price || 0}" min="0" step="0.01" class="fin-work-price" data-index="${i}" style="width:65px;" placeholder="0">
+                        <span style="font-size:0.65rem;color:var(--text-muted);">×</span>
+                        <input type="number" value="${fw.quantity || 1}" min="1" step="1" class="fin-work-qty" data-index="${i}" style="width:40px;">
+                        <strong class="fin-work-total" data-index="${i}" style="min-width:50px;text-align:right;font-size:0.75rem;">${((fw.price || 0) * (fw.quantity || 1)).toFixed(2)}</strong>
+                        <span style="cursor:pointer;color:var(--danger);font-weight:700;font-size:0.9rem;padding:0 3px;" data-remove="${i}">×</span>
+                    </div>
+                `).join('');
+                container.querySelectorAll('.fin-work-price, .fin-work-qty').forEach(inp => {
+                    inp.addEventListener('input', function() {
+                        const idx = parseInt(this.dataset.index);
+                        if (!isNaN(idx) && finWorks[idx]) {
+                            if (this.classList.contains('fin-work-price')) {
+                                finWorks[idx].price = parseFloat(this.value) || 0;
+                            } else {
+                                finWorks[idx].quantity = parseInt(this.value) || 1;
+                            }
+                            const totalEl = container.querySelector(`.fin-work-total[data-index="${idx}"]`);
+                            if (totalEl) {
+                                totalEl.textContent = ((finWorks[idx].price || 0) * (finWorks[idx].quantity || 1)).toFixed(2);
+                            }
+                            updateFinSummary();
+                        }
+                    });
+                });
+                container.querySelectorAll('[data-remove]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const idx = parseInt(btn.dataset.remove);
+                        finWorks.splice(idx, 1);
+                        updateFinWorksList();
+                        updateFinSummary();
+                    });
+                });
+            }
+
+            function updateFinPartsList() {
+                const container = $('#finPartsList');
+                if (!finParts.length) {
+                    container.innerHTML = '<div style="color:var(--text-muted);font-size:0.7rem;padding:4px;">Немає запчастин</div>';
+                    return;
+                }
+                container.innerHTML = finParts.map((fp, i) => `
+                    <div class="fin-work-row" data-fp-index="${i}">
+                        <span style="flex:1;min-width:70px;font-size:0.72rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${fp.name || 'Запчастина'}</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">К-сть:</span>
+                        <input type="number" value="${fp.quantity || 1}" min="1" step="1" class="fin-part-qty" data-index="${i}" style="width:38px;padding:3px 4px;border-radius:4px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);font-size:0.7rem;text-align:center;">
+                        <span style="font-size:0.6rem;color:var(--text-muted);">Ціна/од:</span>
+                        <input type="number" value="${fp.salePrice || 0}" min="0" step="0.01" class="fin-part-price" data-index="${i}" style="width:58px;padding:3px 4px;border-radius:4px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);font-size:0.7rem;text-align:right;">
+                        <strong class="fin-part-total" data-index="${i}" style="min-width:45px;text-align:right;font-size:0.72rem;">${((fp.salePrice || 0) * (fp.quantity || 1)).toFixed(2)}</strong>
+                        <span style="cursor:pointer;color:var(--danger);font-weight:700;font-size:0.9rem;" data-remove-part="${i}">×</span>
+                    </div>
+                `).join('');
+                container.querySelectorAll('.fin-part-qty, .fin-part-price').forEach(inp => {
+                    inp.addEventListener('input', function() {
+                        const idx = parseInt(this.dataset.index);
+                        if (!isNaN(idx) && finParts[idx]) {
+                            if (this.classList.contains('fin-part-qty')) {
+                                finParts[idx].quantity = parseInt(this.value) || 1;
+                            } else {
+                                finParts[idx].salePrice = parseFloat(this.value) || 0;
+                            }
+                            const totalEl = container.querySelector(`.fin-part-total[data-index="${idx}"]`);
+                            if (totalEl) {
+                                totalEl.textContent = ((finParts[idx].salePrice || 0) * (finParts[idx].quantity || 1)).toFixed(2);
+                            }
+                            updateFinSummary();
+                        }
+                    });
+                });
+                container.querySelectorAll('[data-remove-part]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const idx = parseInt(btn.dataset.removePart);
+                        finParts.splice(idx, 1);
+                        updateFinPartsList();
+                        updateFinSummary();
+                    });
+                });
+            }
+
+            function updateFinSummary() {
+                const sumWorks = finWorks.reduce((s, fw) => s + (fw.price || 0) * (fw.quantity || 1), 0);
+                const sumParts = finParts.reduce((s, fp) => s + (fp.salePrice || 0) * (fp.quantity || 1), 0);
+                const extra = parseFloat($('#finExtraCost').value) || 0;
+                const discount = parseFloat($('#finDiscount').value) || 0;
+                const prepayment = parseFloat($('#finPrepayment').value) || 0;
+                const subtotal = sumWorks + sumParts + extra;
+                const discAmt = Math.round(subtotal * discount / 100 * 100) / 100;
+                const total = Math.round((subtotal - discAmt) * 100) / 100;
+                const sumPartsPurchase = finParts.reduce((s, fp) => s + (fp.purchasePrice || 0) * (fp.quantity || 1), 0);
+                const profit = Math.round((sumWorks + sumParts - sumPartsPurchase - discAmt) * 100) / 100;
+                const toPay = Math.round((total - prepayment) * 100) / 100;
+                $('#finSumWorks').textContent = sumWorks.toFixed(2);
+                $('#finSumParts').textContent = sumParts.toFixed(2);
+                $('#finSumExtra').textContent = extra.toFixed(2);
+                $('#finDiscountAmount').textContent = discAmt.toFixed(2);
+                $('#finTotalSum').textContent = total.toFixed(2);
+                $('#finProfit').textContent = profit.toFixed(2);
+                $('#finToPay').textContent = toPay.toFixed(2);
+            }
+
+            function resetFinanceForm() {
+                finEditId = null;
+                finAppointmentId = null;
+                finWorks = [];
+                finParts = [];
+                $('#finEditId').value = '';
+                $('#finAppointmentId').value = '';
+                $('#finFormTitle').textContent = '🧾 Новий чек';
+                $('#finSelectAppointment').value = '';
+                $('#finClientName').value = '';
+                $('#finCarBrand').value = '';
+                $('#finCarModel').value = '';
+                $('#finCarYear').value = '';
+                $('#finPlateNumber').value = '';
+                $('#finDate').value = formatDate(new Date());
+                $('#finExtraCost').value = 0;
+                $('#finDiscount').value = 0;
+                $('#finPrepayment').value = 0;
+                $('#finPaymentStatus').value = 'paid';
+                $('#finWorkSearch').value = '';
+                $('#finPartSearch').value = '';
+                updateFinWorksList();
+                updateFinPartsList();
+                updateFinSummary();
+                populateFinAppointmentsSelect();
+            }
+
+            function saveCheck() {
+                const apptId = finAppointmentId || $('#finAppointmentId').value;
+                if (!apptId) { showToast('❌ Виберіть запис!'); return; }
+                const a = appointments.find(x => x.id === apptId);
+                if (!a) { showToast('❌ Запис не знайдено!'); return; }
+
+                const cn = $('#finClientName').value.trim() || a.clientName || '';
+                const cb = $('#finCarBrand').value.trim() || a.carBrand || '';
+                const cm = $('#finCarModel').value.trim() || a.carModel || '';
+                const cy = $('#finCarYear').value.trim() || a.carYear || '';
+                const pn = $('#finPlateNumber').value.trim() || '';
+                const dv = $('#finDate').value || formatDate(new Date());
+                const extra = parseFloat($('#finExtraCost').value) || 0;
+                const discount = parseFloat($('#finDiscount').value) || 0;
+                const prepayment = parseFloat($('#finPrepayment').value) || 0;
+                const payStatus = $('#finPaymentStatus').value;
+
+                const sumWorks = finWorks.reduce((s, fw) => s + (fw.price || 0) * (fw.quantity || 1), 0);
+                const sumParts = finParts.reduce((s, fp) => s + (fp.salePrice || 0) * (fp.quantity || 1), 0);
+                const subtotal = sumWorks + sumParts + extra;
+                const discAmt = Math.round(subtotal * discount / 100 * 100) / 100;
+                const total = Math.round((subtotal - discAmt) * 100) / 100;
+                const sumPartsPurchase = finParts.reduce((s, fp) => s + (fp.purchasePrice || 0) * (fp.quantity || 1), 0);
+                const profit = Math.round((sumWorks + sumParts - sumPartsPurchase - discAmt) * 100) / 100;
+                const toPay = Math.round((total - prepayment) * 100) / 100;
+                const paidAmount = payStatus === 'paid' ? total : (payStatus === 'partial' ? Math.min(prepayment, total) : 0);
+                const debtRemaining = payStatus === 'paid' ? 0 : Math.max(0, total - prepayment);
+
+                const checkData = {
+                    id: finEditId || generateId(),
+                    appointmentId: apptId,
+                    clientName: cn,
+                    carBrand: cb,
+                    carModel: cm,
+                    carYear: cy,
+                    plateNumber: pn,
+                    date: dv,
+                    works: finWorks.map(fw => ({ name: fw.customName || fw.name, price: fw.price, quantity: fw.quantity || 1, total: (fw.price || 0) * (fw.quantity || 1) })),
+                    parts: finParts.map(fp => ({ name: fp.name || 'Запчастина', purchasePrice: fp.purchasePrice || 0, salePrice: fp.salePrice || 0, quantity: fp.quantity || 1, total: (fp.salePrice || 0) * (fp.quantity || 1) })),
+                    extraCost: extra,
+                    discount,
+                    discountAmount: discAmt,
+                    subtotal,
+                    totalSum: total,
+                    profit,
+                    prepayment,
+                    paidAmount,
+                    debtRemaining,
+                    toPay,
+                    paymentStatus: payStatus,
+                    createdAt: finEditId ? (checks.find(c => c.id === finEditId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
+                };
+
+                if (finEditId) {
+                    const idx = checks.findIndex(c => c.id === finEditId);
+                    if (idx >= 0) checks[idx] = checkData;
+                    showToast('✅ Чек оновлено');
+                } else {
+                    checks.push(checkData);
+                    showToast('✅ Чек створено');
+                }
+
+                const key = getClientProfileKey(cn);
+                if (!clientsDB[key]) clientsDB[key] = { name: cn, phones: [], cars: [], visitCount: 0, totalSpent: 0 };
+                clientsDB[key].totalSpent = (clientsDB[key].totalSpent || 0) + total;
+
+                saveAll();
+                updateClientNamesFromData();
+                resetFinanceForm();
+                renderFinanceTab();
+            }
+
+            function renderFinanceTab() {
+                populateFinAppointmentsSelect();
+                const todayStr = formatDate(new Date());
+                const todayChecks = checks.filter(c => c.date === todayStr);
+                $('#finTodayRevenue').textContent = todayChecks.reduce((s, c) => s + c.totalSum, 0).toFixed(0) + ' грн';
+                $('#finTotalDebt').textContent = checks.reduce((s, c) => s + (c.debtRemaining || 0), 0).toFixed(0) + ' грн';
+                const sorted = [...checks].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+                $('#checkList').innerHTML = sorted.length ? sorted.slice(0, 40).map(c => `
+                    <div class="list-item" onclick="window._editCheck('${c.id}')">
+                        <div><strong>${c.clientName || '—'}</strong><br><small>${c.date} | ${c.carBrand || ''} ${c.carModel || ''}</small></div>
+                        <div style="text-align:right;"><strong>${c.totalSum.toFixed(0)} грн</strong><br><span class="payment-badge ${c.paymentStatus}">${c.paymentStatus === 'paid' ? '✅ Оплачено' : c.paymentStatus === 'partial' ? '⚠️ Частково' : '❌ Борг'}</span></div>
+                    </div>
+                `).join('') : '<div style="color:var(--text-muted);padding:12px;">Немає чеків</div>';
+            }
+
+            window._editCheck = (id) => {
+                const c = checks.find(x => x.id === id);
+                if (!c) return;
+                finEditId = c.id;
+                $('#finEditId').value = c.id;
+                finAppointmentId = c.appointmentId || null;
+                $('#finAppointmentId').value = c.appointmentId || '';
+                $('#finFormTitle').textContent = '✏️ Редагувати чек';
+                $('#finSelectAppointment').value = c.appointmentId || '';
+                $('#finClientName').value = c.clientName || '';
+                $('#finCarBrand').value = c.carBrand || '';
+                $('#finCarModel').value = c.carModel || '';
+                $('#finCarYear').value = c.carYear || '';
+                $('#finPlateNumber').value = c.plateNumber || '';
+                $('#finDate').value = c.date;
+                $('#finExtraCost').value = c.extraCost || 0;
+                $('#finDiscount').value = c.discount || 0;
+                $('#finPrepayment').value = c.prepayment || 0;
+                $('#finPaymentStatus').value = c.paymentStatus;
+                finWorks = (c.works || []).map(w => ({ customName: w.name, name: w.name, price: w.price, quantity: w.quantity || 1 }));
+                finParts = (c.parts || []).map(p => ({ name: p.name, salePrice: p.salePrice, purchasePrice: p.purchasePrice || 0, quantity: p.quantity || 1 }));
+                updateFinWorksList();
+                updateFinPartsList();
+                updateFinSummary();
+                switchTab('finance');
+                $('#sidePanelFinance').scrollIntoView({ behavior: 'smooth' });
+            };
+
+            // ========== ДРУК / КОПІЮВАННЯ / PDF ==========
+            function getCheckReceiptHTML(c) {
+                const lines = [];
+                lines.push(`<div style="text-align:center;margin-bottom:16px;">`);
+                lines.push(`<h2 style="margin:0;">Сервіс Аверс</h2>`);
+                lines.push(`<p style="margin:2px 0;font-size:13px;">Акт виконаних робіт / Чек</p>`);
+                lines.push(`<p style="margin:2px 0;font-size:12px;">№ ${c.id.slice(-8)} від ${c.date}</p>`);
+                lines.push(`</div>`);
+                lines.push(`<p><strong>Клієнт:</strong> ${c.clientName || '—'}</p>`);
+                lines.push(`<p><strong>Автомобіль:</strong> ${c.carBrand || ''} ${c.carModel || ''} (${c.carYear || '—'}) | ${c.plateNumber || '—'}</p>`);
+                lines.push(`<hr>`);
+                if (c.works && c.works.length > 0) {
+                    lines.push(`<h4>🔧 Виконані роботи:</h4>`);
+                    lines.push(`<table><thead><tr><th>Робота</th><th>К-сть</th><th>Ціна</th><th>Сума</th></tr></thead><tbody>`);
+                    c.works.forEach(w => lines.push(`<tr><td>${w.name}</td><td>${w.quantity || 1}</td><td>${(w.price || 0).toFixed(2)}</td><td>${(w.total || 0).toFixed(2)}</td></tr>`));
+                    lines.push(`</tbody></table>`);
+                }
+                if (c.parts && c.parts.length > 0) {
+                    lines.push(`<h4>🔩 Запчастини:</h4>`);
+                    lines.push(`<table><thead><tr><th>Деталь</th><th>К-сть</th><th>Ціна/од</th><th>Сума</th></tr></thead><tbody>`);
+                    c.parts.forEach(p => lines.push(`<tr><td>${p.name}</td><td>${p.quantity || 1}</td><td>${(p.salePrice || 0).toFixed(2)}</td><td>${(p.total || 0).toFixed(2)}</td></tr>`));
+                    lines.push(`</tbody></table>`);
+                }
+                if (c.extraCost > 0) lines.push(`<p><strong>Додаткові витрати:</strong> ${c.extraCost.toFixed(2)} грн</p>`);
+                if (c.discount > 0) lines.push(`<p><strong>Знижка:</strong> ${c.discount}% (${(c.discountAmount || 0).toFixed(2)} грн)</p>`);
+                lines.push(`<hr>`);
+                lines.push(`<p class="print-total" style="font-size:18px;"><strong>💰 Загальна сума: ${(c.totalSum || 0).toFixed(2)} грн</strong></p>`);
+                if (c.prepayment > 0) lines.push(`<p><strong>💵 Передоплата:</strong> ${c.prepayment.toFixed(2)} грн</p>`);
+                lines.push(`<p><strong>💳 Статус оплати:</strong> ${c.paymentStatus === 'paid' ? '✅ Оплачено' : c.paymentStatus === 'partial' ? '⚠️ Частково' : '❌ Борг'} | До оплати: ${(c.toPay || 0).toFixed(2)} грн</p>`);
+                lines.push(`<p style="text-align:center;margin-top:20px;font-size:12px;color:#888;">Дякуємо за довіру! 🚗</p>`);
+                return lines.join('\n');
+            }
+
+            function getCheckReceiptText(c) {
+                const lines = [];
+                lines.push(`🔧 Сервіс Аверс — Чек №${c.id.slice(-8)}`);
+                lines.push(`📅 ${c.date} | 👤 ${c.clientName || '—'}`);
+                lines.push(`🚗 ${c.carBrand || ''} ${c.carModel || ''} (${c.carYear || '—'}) ${c.plateNumber || ''}`);
+                lines.push(`──────────────────────────`);
+                if (c.works && c.works.length > 0) {
+                    lines.push(`🔧 Роботи:`);
+                    c.works.forEach(w => lines.push(`  • ${w.name} ×${w.quantity || 1} — ${(w.price || 0).toFixed(2)} = ${(w.total || 0).toFixed(2)} грн`));
+                }
+                if (c.parts && c.parts.length > 0) {
+                    lines.push(`🔩 Запчастини:`);
+                    c.parts.forEach(p => lines.push(`  • ${p.name} ×${p.quantity || 1} — ${(p.salePrice || 0).toFixed(2)}/од = ${(p.total || 0).toFixed(2)} грн`));
+                }
+                if (c.extraCost > 0) lines.push(`➕ Додаткові: ${c.extraCost.toFixed(2)} грн`);
+                if (c.discount > 0) lines.push(`🏷 Знижка: ${c.discount}% (-${(c.discountAmount || 0).toFixed(2)} грн)`);
+                lines.push(`──────────────────────────`);
+                lines.push(`💰 ЗАГАЛЬНА СУМА: ${(c.totalSum || 0).toFixed(2)} грн`);
+                lines.push(`💳 Статус: ${c.paymentStatus === 'paid' ? 'Оплачено' : c.paymentStatus === 'partial' ? 'Частково' : 'Борг'} | До оплати: ${(c.toPay || 0).toFixed(2)} грн`);
+                lines.push(`🚗 Дякуємо! Сервіс Аверс`);
+                return lines.join('\n');
+            }
+
+            function printCheck() {
+                const id = finEditId;
+                if (!id) { showToast('❌ Спочатку збережіть чек'); return; }
+                const c = checks.find(x => x.id === id);
+                if (!c) { showToast('❌ Чек не знайдено'); return; }
+                const printArea = $('#printArea');
+                printArea.innerHTML = getCheckReceiptHTML(c);
+                printArea.style.display = 'block';
+                window.print();
+                setTimeout(() => { printArea.style.display = 'none'; }, 500);
+            }
+
+            function copyCheck() {
+                const id = finEditId;
+                if (!id) { showToast('❌ Спочатку збережіть чек'); return; }
+                const c = checks.find(x => x.id === id);
+                if (!c) { showToast('❌ Чек не знайдено'); return; }
+                const text = getCheckReceiptText(c);
+                navigator.clipboard.writeText(text).then(() => showToast('📋 Чек скопійовано! Можна вставити у Viber/Telegram/WhatsApp'))
+                    .catch(() => showToast('❌ Помилка копіювання'));
+            }
+
+            function downloadPdf() {
+                const id = finEditId;
+                if (!id) { showToast('❌ Спочатку збережіть чек'); return; }
+                const c = checks.find(x => x.id === id);
+                if (!c) { showToast('❌ Чек не знайдено'); return; }
+                const printArea = $('#printArea');
+                printArea.innerHTML = getCheckReceiptHTML(c);
+                printArea.style.display = 'block';
+                window.print();
+                setTimeout(() => { printArea.style.display = 'none'; }, 500);
+                showToast('📥 У діалозі друку оберить "Зберегти як PDF"');
+            }
+
+            // ========== КЛІЄНТИ ==========
+            function renderClientsTab() {
+                const container = $('#clientsListContainer');
+                const profiles = Object.values(clientsDB).sort((a, b) => (b.visitCount || 0) - (a.visitCount || 0));
+                container.innerHTML = profiles.length ? profiles.map(p => `
+                    <div class="list-item" onclick="window._showClientDetail('${getClientProfileKey(p.name)}')">
+                        <div><strong>${p.name}</strong><br><small>${p.phones?.[0] || ''}</small></div>
+                        <div style="text-align:right;"><span>Візитів: ${p.visitCount || 0}</span><br><span>Витрат: ${(p.totalSpent || 0).toFixed(0)} грн</span></div>
+                    </div>
+                `).join('') : '<div style="color:var(--text-muted);padding:12px;">Немає клієнтів</div>';
+                $('#clientDetailPanel').innerHTML = '<div style="color:var(--text-muted);padding:12px;">Оберіть клієнта для перегляду</div>';
+            }
+
+            window._showClientDetail = (key) => {
+                const p = clientsDB[key];
+                if (!p) return;
+                const clientChecks = checks.filter(c => getClientProfileKey(c.clientName || '') === key);
+                const clientAppts = appointments.filter(a => getClientProfileKey(a.clientName || '') === key);
+                $('#clientDetailPanel').innerHTML = `
+                    <h3>${p.name}</h3>
+                    <p>📞 ${(p.phones || []).join(', ') || '—'}</p>
+                    <p>🚗 ${(p.cars || []).map(c => `${c.brand} ${c.model} (${c.year || '—'})`).join('; ') || '—'}</p>
+                    <p>🔄 Візитів: ${p.visitCount || 0} | 💰 Витрат: ${(p.totalSpent || 0).toFixed(2)} грн</p>
+                    <h4 style="margin-top:8px;">Останні чеки:</h4>
+                    ${clientChecks.slice(0,5).map(c => `<div style="font-size:0.7rem;padding:3px 0;">${c.date} — ${c.totalSum.toFixed(2)} грн (${c.paymentStatus})</div>`).join('') || '—'}
+                    <h4 style="margin-top:8px;">Останні записи:</h4>
+                    ${clientAppts.slice(0,5).map(a => `<div style="font-size:0.7rem;padding:3px 0;">${a.date} ${a.time?.slice(0,5)} — ${(a.services || []).join(', ')}</div>`).join('') || '—'}
+                `;
+            };
+
+            // ========== НАВІГАЦІЯ ==========
+            function switchTab(tab) {
+                $$('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector(`.tab-btn[data-tab="${tab}"]`)?.classList.add('active');
+                $$('.tab-content').forEach(c => c.classList.remove('active'));
+                const tabEl = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+                if (tabEl) tabEl.classList.add('active');
+                if (tab === 'calendar') renderCalendar();
+                if (tab === 'finance') renderFinanceTab();
+                if (tab === 'clients') renderClientsTab();
+            }
+
+            // ========== ІНІЦІАЛІЗАЦІЯ (АСИНХРОННА) ==========
+            async function init() {
+                await loadData();
+                loadTheme();
+                $('#inputDate').value = formatDate(selectedDate);
+                $('#finDate').value = formatDate(new Date());
+                renderCalendar();
+                populateFinAppointmentsSelect();
+                renderWorksTags();
+                updateFinWorksList();
+                updateFinPartsList();
+                updateFinSummary();
+                renderTodayClients();
+
+                // Налаштування автодоповнень
+                setupAutocomplete($('#inputClientName'), $('#dropdownClientName'), clientNames, {
+                    onSelect: (item) => {
+                        $('#inputClientName').value = item.name;
+                        const key = getClientProfileKey(item.name);
+                        if (clientsDB[key]) {
+                            const c = clientsDB[key];
+                            if (c.phones && c.phones.length > 0) $('#inputPhone').value = c.phones[0];
+                            if (c.cars && c.cars.length > 0) {
+                                const car = c.cars[0];
+                                $('#inputCarBrand').value = car.brand || '';
+                                $('#inputCarModel').value = car.model || '';
+                                $('#inputCarYear').value = car.year || '';
+                            }
+                        }
+                    },
+                    allowAddNew: true,
+                    addNewLabel: '➕ Створити клієнта: ',
+                    minChars: 1,
+                    clearAfterSelect: false
+                });
+
+                setupAutocomplete($('#inputCarBrand'), $('#dropdownCarBrand'), Object.keys(carCatalog).sort(), {
+                    onSelect: (item) => {
+                        $('#inputCarBrand').value = item.name;
+                        $('#inputCarModel').value = '';
+                        $('#inputCarModel').focus();
+                    },
+                    allowAddNew: true,
+                    addNewLabel: '➕ Додати марку: ',
+                    minChars: 1,
+                    clearAfterSelect: false
+                });
+
+                $('#inputCarModel').addEventListener('focus', function() {
+                    const brand = $('#inputCarBrand').value.trim();
+                    const models = brand && carCatalog[brand] ? carCatalog[brand] : [];
+                    setupAutocomplete($('#inputCarModel'), $('#dropdownCarModel'), models, {
+                        onSelect: (item) => { $('#inputCarModel').value = item.name; },
+                        allowAddNew: true,
+                        addNewLabel: '➕ Додати модель: ',
+                        minChars: 1,
+                        clearAfterSelect: false
+                    });
+                    if (models.length > 0 && !this.value) {
+                        const ev = new Event('input');
+                        this.dispatchEvent(ev);
+                    }
+                });
+
+                setupAutocomplete($('#inputWorkSearch'), $('#dropdownWorkSearch'), workCatalog, {
+                    onSelect: (item) => {
+                        if (item.isNew && !workCatalog.includes(item.name)) {
+                            workCatalog.push(item.name);
+                            workCatalog.sort((a, b) => a.localeCompare(b, 'uk'));
+                            saveAll();
+                        }
+                        addWorkToSelection(item.name);
+                    },
+                    allowAddNew: true,
+                    addNewLabel: '➕ Додати роботу: ',
+                    minChars: 1,
+                    clearAfterSelect: true
+                });
+
+                setupAutocomplete($('#finWorkSearch'), $('#dropdownFinWorkSearch'), workCatalog, {
+                    onSelect: (item) => {
+                        if (item.isNew && !workCatalog.includes(item.name)) {
+                            workCatalog.push(item.name);
+                            workCatalog.sort((a, b) => a.localeCompare(b, 'uk'));
+                            saveAll();
+                        }
+                        finWorks.push({ customName: item.name, name: item.name, price: 0, quantity: 1 });
+                        updateFinWorksList();
+                        updateFinSummary();
+                    },
+                    allowAddNew: true,
+                    addNewLabel: '➕ Додати роботу: ',
+                    minChars: 1,
+                    clearAfterSelect: true
+                });
+
+                setupAutocomplete($('#finPartSearch'), $('#dropdownFinPartSearch'), partsCatalog, {
+                    onSelect: (item) => {
+                        if (item.isNew && !partsCatalog.includes(item.name)) {
+                            partsCatalog.push(item.name);
+                            partsCatalog.sort((a, b) => a.localeCompare(b, 'uk'));
+                            saveAll();
+                        }
+                        finParts.push({ name: item.name, salePrice: 0, purchasePrice: 0, quantity: 1 });
+                        updateFinPartsList();
+                        updateFinSummary();
+                    },
+                    allowAddNew: true,
+                    addNewLabel: '➕ Додати запчастину: ',
+                    minChars: 1,
+                    clearAfterSelect: true
+                });
+
+                setupAutocomplete($('#clientSearchInput'), $('#dropdownClientSearch'), clientNames, {
+                    onSelect: (item) => {
+                        $('#clientSearchInput').value = item.name;
+                        window._showClientDetail(getClientProfileKey(item.name));
+                    },
+                    minChars: 1,
+                    clearAfterSelect: false
+                });
+
+                // Обробники подій
+                $('#themeToggle').addEventListener('click', toggleTheme);
+                $('#logoSection').addEventListener('click', () => {
+                    currentDate = new Date();
+                    selectedDate = new Date();
+                    renderCalendar();
+                });
+                $('#btnNewAppointment').addEventListener('click', () => {
+                    resetCalendarForm();
+                    switchTab('calendar');
+                    $('#sidePanelCalendar').scrollIntoView({ behavior: 'smooth' });
+                });
+                $('#btnNewCheck').addEventListener('click', () => {
+                    resetFinanceForm();
+                    switchTab('finance');
+                    $('#sidePanelFinance').scrollIntoView({ behavior: 'smooth' });
+                });
+                $('#btnSave').addEventListener('click', saveAppointment);
+                $('#btnCancel').addEventListener('click', resetCalendarForm);
+                $('#btnDelete').addEventListener('click', () => { if (editingId) deleteAppointment(editingId); });
+                $('#btnPrev').addEventListener('click', () => {
+                    currentDate.setMonth(currentDate.getMonth() - 1);
+                    renderCalendar();
+                });
+                $('#btnNext').addEventListener('click', () => {
+                    currentDate.setMonth(currentDate.getMonth() + 1);
+                    renderCalendar();
+                });
+                $('#btnToday').addEventListener('click', () => {
+                    currentDate = new Date();
+                    selectedDate = new Date();
+                    renderCalendar();
+                });
+                $('#finSelectAppointment').addEventListener('change', function() {
+                    autoFillFinanceFromAppointment(this.value);
+                });
+                $('#btnSaveCheck').addEventListener('click', saveCheck);
+                $('#btnCancelCheck').addEventListener('click', resetFinanceForm);
+                $('#finDiscount').addEventListener('input', updateFinSummary);
+                $('#finExtraCost').addEventListener('input', updateFinSummary);
+                $('#finPrepayment').addEventListener('input', updateFinSummary);
+                $('#finPaymentStatus').addEventListener('change', updateFinSummary);
+                $('#btnPrintCheck').addEventListener('click', printCheck);
+                $('#btnCopyCheck').addEventListener('click', copyCheck);
+                $('#btnPdfCheck').addEventListener('click', downloadPdf);
+                $('#btnRefreshClients').addEventListener('click', renderClientsTab);
+
+                $('#todayClientsToggle').addEventListener('click', toggleTodayClients);
+
+                $$('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.autocomplete-wrapper')) {
+                        $$('.autocomplete-dropdown').forEach(d => { d.classList.remove('show'); d.innerHTML = ''; });
+                    }
+                });
+
+                setInterval(() => {
+                    const todayStr = formatDate(new Date());
+                    const todayCells = $$('.month-cell.today');
+                    if (todayCells.length === 0 || !isSameDay(currentDate, new Date())) {
+                        if (isSameDay(selectedDate, new Date())) selectedDate = new Date();
+                        currentDate = new Date();
+                        renderCalendar();
+                    }
+                    renderTodayClients();
+                }, 60000);
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                init().catch(e => console.error('Помилка ініціалізації:', e));
+            });
+
+        })();
+    </script>
+</body>
+</html>
